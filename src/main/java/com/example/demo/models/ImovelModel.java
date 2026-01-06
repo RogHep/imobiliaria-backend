@@ -5,15 +5,7 @@ import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,7 +13,7 @@ import lombok.Setter;
 @Table(name = "imoveis")
 @Getter
 @Setter
-public class ImovelModel implements Serializable{
+public class ImovelModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -29,24 +21,21 @@ public class ImovelModel implements Serializable{
     private Integer id;
 
     private String titulo;
-   
+
     @Column(columnDefinition = "text")
     private String descricao;
 
     @Column(name = "preco_venda", precision = 15, scale = 2)
     private BigDecimal precoVenda;
 
-    @Column(name = "preco_aluguel", precision = 15, scale = 2) // ajuste o nome se for preco_aluguel
+    @Column(name = "preco_aluguel", precision = 15, scale = 2)
     private BigDecimal precoAluguel;
 
-    private String finalidade; 
-
+    private String finalidade;
     private String status;
 
     private Integer dormitorios;
-
     private Integer banheiros;
-
     private Integer garagem;
 
     @Column(name = "area_total", precision = 15, scale = 2)
@@ -55,15 +44,20 @@ public class ImovelModel implements Serializable{
     @Column(name = "area_construida", precision = 15, scale = 2)
     private BigDecimal areaConstruida;
 
-    // Endereço
     private String endereco;
+
+    // numero é VARCHAR(255) no banco
     private String numero;
+
     private String complemento;
+
+    // cep é VARCHAR(255)
     private String cep;
 
     @Column(columnDefinition = "text")
     private String caracteristicas;
 
+    // destaque é tinyint(1) → BOOLEAN
     private Boolean destaque;
 
     @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
@@ -71,36 +65,8 @@ public class ImovelModel implements Serializable{
     @JoinColumn(name = "tipo_imovel_id")
     private TipoImovelModel tipoImovel;
 
-
     @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bairro_id")
     private BairroModel bairro;
-
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ImovelModel other = (ImovelModel) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        return true;
-    }
-
 }

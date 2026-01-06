@@ -9,8 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import com.example.demo.models.ImovelModel;
 import com.example.demo.services.ImovelService;
 
@@ -46,15 +44,9 @@ public class ImovelController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> insert(@RequestBody ImovelModel model) {
-        model = service.insert(model);
-
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(model.getId())
-                .toUri();
-
-        return ResponseEntity.created(uri).build();
+    public ResponseEntity<ImovelModel> insert(@RequestBody ImovelModel model) {
+        ImovelModel novo = service.insert(model);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novo);
     }
 
     @PutMapping(value = "/{id}")
@@ -71,7 +63,7 @@ public class ImovelController {
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         service.delete(id);
-        return ResponseEntity.noContent().build(); // <-- corrigido!
+        return ResponseEntity.noContent().build();
     }
 
 }

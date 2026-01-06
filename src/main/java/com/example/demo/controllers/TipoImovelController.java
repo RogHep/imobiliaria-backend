@@ -1,6 +1,5 @@
 package com.example.demo.controllers;
 
-import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,49 +16,46 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.example.demo.models.TipoImovelModel;
-import com.example.demo.services.BairroService;
 import com.example.demo.services.TipoImovelService;
-
 
 @RestController
 @RequestMapping(value = "/tiposimoveis")
 @CrossOrigin(origins = "*")
-
 public class TipoImovelController {
 
     @Autowired
     private TipoImovelService service;
 
+    // LISTAR TODOS
     @GetMapping()
-    public ResponseEntity<List<TipoImovelModel>> getAllBairros() {
+    public ResponseEntity<List<TipoImovelModel>> getAllTipos() {
         List<TipoImovelModel> list = service.getAll();
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 
+    // PAGINADO (opcional)
     @GetMapping("/tipos-page")
     public Page<TipoImovelModel> getPosts(Pageable pageable) {
         return service.getAll(pageable);
     }
 
-
+    // BUSCAR POR ID
     @GetMapping(value = "/{id}")
-        public ResponseEntity<TipoImovelModel> find(@PathVariable Integer id) {
+    public ResponseEntity<TipoImovelModel> find(@PathVariable Integer id) {
         TipoImovelModel model = service.find(id);
         return ResponseEntity.status(HttpStatus.OK).body(model);
     }
 
+    // CRIAR TIPO DE IMÓVEL (CORRIGIDO)
     @PostMapping
-    public ResponseEntity<Void> insert(@RequestBody TipoImovelModel model) {
+    public ResponseEntity<TipoImovelModel> insert(@RequestBody TipoImovelModel model) {
         model = service.insert(model);
-        // return new ResponseEntity(model, HttpStatus.CREATED);
-        URI uri =
-        ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(model.getId()).toUri();
-        return ResponseEntity.created(uri).build();
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(model);
+    }
 
+    // ATUALIZAR
     @PutMapping(value = "/{id}")
     public ResponseEntity<Void> update(@RequestBody TipoImovelModel model, @PathVariable Integer id) {
         model.setId(id);
@@ -67,11 +63,10 @@ public class TipoImovelController {
         return ResponseEntity.noContent().build();
     }
 
+    // EXCLUIR
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
-
-
 }

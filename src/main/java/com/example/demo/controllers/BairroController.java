@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.example.demo.models.BairroModel;
 import com.example.demo.services.BairroService;
@@ -30,33 +29,34 @@ public class BairroController {
     @Autowired
     private BairroService service;
 
+    // LISTAR TODOS OS BAIRROS
     @GetMapping()
     public ResponseEntity<List<BairroModel>> getAllBairros() {
         List<BairroModel> list = service.getAll();
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 
+    // LISTAR PAGINADO (OPCIONAL)
     @GetMapping("/bairros-page")
     public Page<BairroModel> getPosts(Pageable pageable) {
         return service.getAll(pageable);
     }
 
-
+    // BUSCAR POR ID
     @GetMapping(value = "/{id}")
-        public ResponseEntity<BairroModel> find(@PathVariable Integer id) {
+    public ResponseEntity<BairroModel> find(@PathVariable Integer id) {
         BairroModel model = service.find(id);
         return ResponseEntity.status(HttpStatus.OK).body(model);
     }
 
+    // CRIAR BAIRRO  (CORRIGIDO)
     @PostMapping
-    public ResponseEntity<Void> insert(@RequestBody BairroModel model) {
+    public ResponseEntity<BairroModel> insert(@RequestBody BairroModel model) {
         model = service.insert(model);
-        // return new ResponseEntity(model, HttpStatus.CREATED);
-        URI uri =
-        ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(model.getId()).toUri();
-        return ResponseEntity.created(uri).build();
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(model);
+    }
 
+    // ALTERAR BAIRRO
     @PutMapping(value = "/{id}")
     public ResponseEntity<Void> update(@RequestBody BairroModel model, @PathVariable Integer id) {
         model.setId(id);
@@ -64,11 +64,11 @@ public class BairroController {
         return ResponseEntity.noContent().build();
     }
 
+    // EXCLUIR BAIRRO
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
-
 
 }
